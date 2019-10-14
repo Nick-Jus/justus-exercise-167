@@ -1,0 +1,254 @@
+//AUTHOR: Nicholas Justus
+//COURSE: CPT167
+//PURPOSE: Methods Part 2
+//STARTDATE: October 7, 2019
+//-------------------------------------------------------------------------------------------------------------------------
+package edu.cpt167.justus.module6;
+
+import java.util.Scanner;
+
+public class Methods
+{
+	
+	public static final double DISCOUNT_RATE_MEMBER = 0.15;
+	public static final double DISCOUNT_RATE_SENIOR = 0.25;
+	public static final double DISCOUNT_RATE_NONE = 0.0;
+	public static final double TAX_RATE = 0.075;
+	public static final String RIB_A = "Premium Ribs";
+	public static final double PRICE_A = 32.40;   //these prices are made-up
+	public static final String RIB_B = "Special Ribs";
+	public static final double PRICE_B = 25.75;
+	public static final String RIB_C = "Raw Ribs";
+	public static final double PRICE_C = 17.22;
+	public static final String RIB_QUIT = "Quit";
+	public static final int RESET_VALUE = 0;
+	public static String userName = "";
+	
+	public static void main(String[] args) 
+	{	
+		//Variables
+		//Input Scanner
+		Scanner input = new Scanner(System.in);
+		//Declarations
+		char selectionEmp = ' ';
+		int howMany = 0;
+		int howManyEach = 0;
+		String ribName = "";
+		int memberCount = 0;
+		int seniorCount = 0;
+		int noneCount = 0;
+		int premiumCount = 0;
+		int specialCount = 0;
+		int basicCount = 0;
+		int itemCounter = 0;
+		double grandTotal = 0.0;
+		double discountRate = 0.0;
+		char discountSelection = ' ';
+		double price = 0.0;
+		double discountAmt = 0.0;
+		double discountPrice = 0.0;
+		double subTotal = 0.0;
+		double tax = 0.0;
+		double totalCost = 0.0;
+		double customerTotal = 0.0;
+
+		//Welcome Banner
+		displayWelcomeBanner();
+		
+		//Input
+		getUserName(input);
+		
+		while (discountSelection !='Q') 
+		{
+			discountSelection = validateDiscount(input);
+			if (discountSelection !='Q'){
+				howMany = validateHowMany(input);
+				while (howMany > itemCounter) {
+					selectionEmp = validateRib(input);
+					howManyEach = validateHowManyEach(input);
+			
+					if (discountSelection == 'A') {
+						discountRate = DISCOUNT_RATE_MEMBER;
+						memberCount++;
+					}
+					else if (discountSelection == 'B') {
+						discountRate = DISCOUNT_RATE_SENIOR;
+						seniorCount++;
+					}
+					else {
+						discountRate = DISCOUNT_RATE_NONE;
+						noneCount++;
+					}
+				
+					if (selectionEmp == 'A') {
+						ribName = RIB_A;
+						price = PRICE_A;
+						premiumCount++;
+					}	
+					else if (selectionEmp == 'B') {
+						ribName = RIB_B;
+						price = PRICE_B;
+						specialCount++;
+					}
+					else {
+						ribName = RIB_C;
+						price = PRICE_C;
+						basicCount++;
+					}
+				
+					//Calculations
+					discountAmt = price * discountRate;
+					discountPrice = price - discountAmt;
+					subTotal = howManyEach * discountPrice;
+					tax = subTotal * TAX_RATE;
+					totalCost = subTotal + tax;
+					customerTotal = customerTotal + totalCost;
+					grandTotal = grandTotal + totalCost;
+					
+					displayTransactionReport(ribName, price, discountAmt, discountPrice, howManyEach, subTotal, tax, totalCost);
+					itemCounter++;
+					}
+				if (howMany > 0) {
+					displayCustomerReport(howMany, customerTotal);
+					itemCounter = RESET_VALUE;
+					customerTotal = RESET_VALUE;
+				}
+			}
+		}
+		if (grandTotal > 0.0) {
+			displayFinalReport(memberCount, seniorCount, noneCount, premiumCount, specialCount, basicCount, grandTotal);
+		}
+		//Farewell
+		System.out.println("\nThank you, " + userName + ", for using the Transaction Tracker Program!");
+		
+		//Closing Input Scanner
+		input.close();
+		}
+	
+	
+	
+	public static void displayWelcomeBanner()
+		{
+		System.out.println("Welcome to Ribs Sale Program!");
+		}
+	
+	public static void getUserName(Scanner borrowedInput)
+		{
+		System.out.println("\nPlease enter your first name:");
+		userName = borrowedInput.next();
+		}
+	
+	public static char validateDiscount(Scanner borrowedInput)
+		{
+		char tempDiscountSelection;
+		//Menu
+		System.out.printf("\n%-3s \n", "DISCOUNT MENU");
+		System.out.printf("%-3s %1s\n", "[A]", "for Member Discount");
+		System.out.printf("%-3s %1s\n", "[B]", "for Senior Discount");
+		System.out.printf("%-3s %1s\n", "[C]", "for no Discount");
+		System.out.printf("%-3s %1s %-8s\n", "[Q]", "to ", RIB_QUIT);
+		tempDiscountSelection = borrowedInput.next().toUpperCase().charAt(0);
+		while (tempDiscountSelection !='A'&&tempDiscountSelection !='B'&&tempDiscountSelection !='C'&&tempDiscountSelection !='Q')
+		{
+			System.out.println("\nError: Invalid Input. Please try again.");
+			tempDiscountSelection = borrowedInput.next().toUpperCase().charAt(0);
+		}
+		return tempDiscountSelection;
+		}	
+		
+	public static char validateRib(Scanner borrowedInput)
+		{
+		char tempRibName;
+		//Menu
+		System.out.printf("\n%-3s \n", "RIBS MENU");
+		System.out.printf("%-3s %1s %-8s\n", "[A]", "for ", RIB_A);
+		System.out.printf("%-3s %1s %-8s\n", "[B]", "for ", RIB_B);
+		System.out.printf("%-3s %1s %-8s\n", "[C]", "for ", RIB_C);
+		tempRibName = borrowedInput.next().toUpperCase().charAt(0);
+		while (tempRibName !='A'&&tempRibName !='B'&&tempRibName !='C')
+		{
+			System.out.println("\nError: Invalid Input. Please try again.");
+			tempRibName = borrowedInput.next().toUpperCase().charAt(0);
+		}
+		return tempRibName;
+		}
+	
+	public static int validateHowManyEach(Scanner borrowedInput)
+		{
+		int tempHowManyEach;
+		//Menu
+		System.out.println(userName + ", how many ribs would you like, in this order?");
+		tempHowManyEach = borrowedInput.nextInt();
+		while (tempHowManyEach <= 0)
+		{
+			System.out.println("\nError: Must be 1 minimum. Please try again.");
+			tempHowManyEach = borrowedInput.nextInt();
+		}
+		return tempHowManyEach;
+		}
+	
+	
+	public static int validateHowMany(Scanner borrowedInput)
+		{
+		int tempHowMany;
+		//Menu
+		System.out.println(userName + ", how many orders would you like, in total?");
+		tempHowMany = borrowedInput.nextInt();
+		while (tempHowMany <= 0)
+		{
+			System.out.println("\nError: Must Order 1 Rib Minimum. Please try again.");
+			tempHowMany = borrowedInput.nextInt();
+		}
+		return tempHowMany;
+		}
+	
+	public static double validateSales(Scanner borrowedInput)
+		{
+		double tempSales = 0.0;
+		System.out.println("\nEnter the most recent sale: ");
+		tempSales = borrowedInput.nextDouble();
+		while (tempSales < 0.0)
+		{
+			System.out.println("\nError: Sales cannot be negative. Please try again.");
+			tempSales = borrowedInput.nextDouble();
+		}
+		return tempSales;
+		}
+	
+	public static void displayTransactionReport (String borrowedRibName, double borrowedPrice, double borrowedDiscountAmt, double borrowedDiscountPrice, int borrowedHowManyEach, double borrowedSubTotal, double borrowedTax, double borrowedTotalCost)
+		{
+		System.out.printf("%1s \n", "Transaction Report:");
+		System.out.printf("%-1s %14s %-1s \n", "User:               ", "", userName);
+		System.out.printf("%-1s %14s %-1s \n", "Ribs:               ", "", borrowedRibName);
+		System.out.printf("%-1s %18s %-1.2f \n", "Rib Cost:         ", "$", borrowedPrice);
+		System.out.printf("%-1s %18s %-1.2f \n", "Discount Amount:  ", "$", borrowedDiscountAmt);
+		System.out.printf("%-1s %18s %-1.2f \n", "Discount Price:   ", "$", borrowedDiscountPrice);
+		System.out.printf("%-1s %14s %-1d \n", "How Many:           ", "", borrowedHowManyEach);
+		System.out.printf("%-1s %18s %-1.2f \n", "Subtotal:         ", "$", borrowedSubTotal);
+		System.out.printf("%-1s %18s %-1.2f \n", "Tax:              ", "$", borrowedTax);
+		System.out.printf("%-1s %18s %-1.2f \n", "Total:            ", "$", borrowedTotalCost);
+		}
+	
+	public static void displayCustomerReport (int borrowedHowMany, double borrowedCustomerTotal)
+		{
+		System.out.printf("\n%1s \n", "Customer Report:");
+		System.out.printf("%-1s %13s %-1d\n", "How Many Items:      ", "", borrowedHowMany);
+		System.out.printf("%-1s %18s %-1.2f \n", "Customer Total:   ", "$", borrowedCustomerTotal);
+		}
+	
+	public static void displayFinalReport (int borrowedMemberCount, int borrowedSeniorCount, int borrowedNoneCount, int borrowedBasicCount, int borrowedSpecialCount, int borrowedPremiumCount, double borrowedGrandTotal)
+		{
+		System.out.printf("\n%-25s\n", "Final Report:");
+		System.out.printf("%-1s %14s %-1d \n", "Members:       ", "", borrowedMemberCount);
+		System.out.printf("%-1s %14s %-1d \n", "Seniors:       ", "", borrowedSeniorCount);
+		System.out.printf("%-1s %14s %-1d \n", "No Discount:   ", "", borrowedNoneCount);
+		System.out.printf("%-1s %14s %-1d \n", "Premium Sales: ", "", borrowedPremiumCount);
+		System.out.printf("%-1s %14s %-1d \n", "Special Sales: ", "", borrowedSpecialCount);
+		System.out.printf("%-1s %14s %-1d \n", "Basic Sales:   ", "", borrowedBasicCount);
+		System.out.printf("%-1s %14s %-1.2f \n", "Grand Total:   ", "$", borrowedGrandTotal);
+		}
+	}
+
+
+
+
